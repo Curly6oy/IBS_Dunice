@@ -23,7 +23,7 @@ class Desk extends Component {
     render() {
         return (
             <div> 
-                <ContentHeader title='Рабочие места' small='Управление' />
+                <ContentHeader title='Workstations' small='Management' />
                 <Content>
                     <Tabs> 
                         <TabsHeader> 
@@ -38,15 +38,15 @@ class Desk extends Component {
                             </TabContent>
                             <TabContent id='tabCreate'>
                                 <Form onSubmit={this.props.create}
-                                    submitLabel='Создать' submitClass='primary' cancelLabel='Очистить'/>
+                                    submitLabel='Создать' submitClass='primary' cancelLabel='Отмена'/>
                             </TabContent>
                             <TabContent id='tabUpdate'>
                                 <Form onSubmit={this.props.update}
-                                    submitLabel='Обновить' submitClass='info' cancelLabel='Отменить'/>
+                                    submitLabel='Обновить' submitClass='info' cancelLabel='Отмена'/>
                             </TabContent>
                             <TabContent id='tabDelete'>
                                 <Form onSubmit={this.props.remove} readOnly={true}
-                                    submitLabel='Удалить' submitClass='danger' cancelLabel='Отменить'/>
+                                    submitLabel='Удалить' submitClass='danger' cancelLabel='Отмена'/>
                             </TabContent>
                         </TabsContent> 
                     </Tabs> 

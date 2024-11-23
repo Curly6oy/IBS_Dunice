@@ -22,16 +22,16 @@ class EmployeeForm extends Component {
             <form role='form' onSubmit={handleSubmit}>
                 <div className='box-body'>
                     <Field name='name' value={name} component={LabelAndInput} readOnly={readOnly}
-                        label='Name' cols='12 3' autoFocus={true} />
+                        label='Имя' cols='12 3' autoFocus={true} />
 
                     <Field name='identifier' component={Identifier} readOnly={readOnly}
-                        label='Identifier' cols='12 3' autoFocus={true} />
+                        label='Идентификатор' cols='12 3' autoFocus={true} />
 
                     <Field name='email' component={Email} readOnly={readOnly}
-                        label='Email' cols='12 3' autoFocus={true} />
+                        label='Почта' cols='12 3' autoFocus={true} />
 
                     <Field name='phone' component={Phone} readOnly={readOnly}
-                        label='Phone' cols='12 3' autoFocus={true} />
+                        label='Телефон' cols='12 3' autoFocus={true} />
 
                 </div>
                 <div className='box-footer text-right'>
@@ -39,7 +39,7 @@ class EmployeeForm extends Component {
                         {this.props.submitLabel}
                     </button>
                     <button type='button' className='btn btn-default'
-                        onClick={this.props.init}>Cancel</button>
+                        onClick={this.props.init}>Отменить</button>
                 </div>
             </form>
         )

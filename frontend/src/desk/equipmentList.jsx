@@ -14,7 +14,7 @@ const getPossibleEquipments = () => {
     equipments.push({ id: 'Chair', type: 'Стул' })
     equipments.push({ id: 'Desk', type: 'Стол' })
     equipments.push({ id: 'Desktop', type: 'Настольный компьютер' })
-    equipments.push({ id: 'Drawer', type: 'Шкаф' })
+    equipments.push({ id: 'Drawer', type: 'Тумба' })
     equipments.push({ id: 'Laptop', type: 'Ноутбук' })
     equipments.push({ id: 'Monitor', type: 'Монитор' })
     equipments.push({ id: 'Phone', type: 'Телефон' })
@@ -38,8 +38,8 @@ export default class ItemList extends Component {
                         name={`${member}.patrimony`}
                         type="text"
                         component={Input}
-                        placeholder="Патримония"
-                        
+                        placeholder="Patrimony"
+                        component={EquipmentSuggestion} 
                         list={this.props.list}
                         icon="fa fa-tag"                        
                         field="patrimony"
@@ -51,7 +51,7 @@ export default class ItemList extends Component {
                         component={Select}
                         options={getPossibleEquipments()}
                         optionValue='id' optionLabel='type'
-                        placeholder="Тип" readOnly={this.props.readOnly} />
+                        placeholder="Type" readOnly={this.props.readOnly} />
 
                     <Grid cols='12 2'>
                         <If test={!index}>

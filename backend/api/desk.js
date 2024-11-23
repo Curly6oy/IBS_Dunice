@@ -43,86 +43,70 @@ module.exports = app => {
     })
 
     const saveDesk = (carrier) => new Promise((resolve, reject) => {
-        const desk = carrier.desk;
-        const equipments = getNotEmptyEquipments(desk.equipments || []);
-        const employees = getNotEmptyEmployees(desk.employees || []);
-    
-        console.log('Equipments для сохранения:', equipments);
-    
-        carrier.equipments = equipments;
-        carrier.employees = employees;
-    
-        delete desk.equipments;
-        delete desk.employees;
-    
+        const desk = carrier.desk
+        const equipments = getNotEmptyEquipments(desk.equipments || [])
+        const employees = getNotEmptyEmployees(desk.employees || [])
+
+        carrier.equipments = equipments
+        carrier.employees = employees
+
+        delete desk.equipments
+        delete desk.employees
+
         if (!desk.id) {
-            desk.created_at = new Date();
-            desk.updated_at = null;
-    
+            desk.created_at = new Date()
+            desk.updated_at = null
+
             app.db('desks')
                 .insert(desk)
                 .returning('id')
                 .then(deskId => {
-                    carrier.deskId = deskId[0];
-                    resolve(carrier);
+                    carrier.deskId = deskId[0]
+                    resolve(carrier)
                 })
-                .catch(err => {
-                    console.error('Ошибка сохранения рабочего места:', err);
-                    reject(err);
-                });
+                .catch(err => reject(err))
         } else {
-            desk.updated_at = new Date();
-    
+            desk.updated_at = new Date()
+
             app.db('desks')
                 .update(desk)
                 .where({ id: desk.id })
-                .then(() => {
-                    carrier.deskId = desk.id;
-                    resolve(carrier);
+                .then(_ => {
+                    carrier.deskId = desk.id
+                    resolve(carrier)
                 })
-                .catch(err => {
-                    console.error('Ошибка обновления рабочего места:', err);
-                    reject(err);
-                });
+                .catch(err => reject(err))
         }
-    });
-    
+    })
 
     const analyzeEquipments = (carrier) => new Promise((resolve, reject) => {
-        const equipments = carrier.equipments;
-    
+
+        const equipments = carrier.equipments
+
         if (equipments && equipments.length > 0) {
-            const patrimoniesMap = equipments.reduce((map, equipment) => {
-                map[equipment.patrimony] = equipment;
-                return map;
-            }, {});
-    
-            const patrimonies = Object.keys(patrimoniesMap);
-    
-            app.db('equipments')
-                .whereIn('patrimony', patrimonies)
+            const patrimoniesMap = equipments.map(equipment => ({
+                patrimony: +equipment.patrimony, equipment
+            }))
+
+            const patrimonies = patrimoniesMap.map(p => p.patrimony)
+
+            app.db('equipments').whereIn('patrimony', patrimonies)
                 .then(equipmentsFound => {
-                    const patrimoniesFound = equipmentsFound.map(e => e.patrimony);
-                    const equipmentsToUpdate = equipmentsFound.map(e => ({
-                        ...e,
-                        ...patrimoniesMap[e.patrimony],
-                    }));
-                    const equipmentsToInsert = equipments.filter(
-                        e => !patrimoniesFound.includes(e.patrimony)
-                    );
-    
-                    carrier.equipmentsToUpdate = equipmentsToUpdate;
-                    carrier.equipmentsToInsert = equipmentsToInsert;
-    
-                    resolve(carrier);
-                })
-                .catch(err => reject(err));
+                    const equipmentsToUpdate = equipmentsFound.map(e => ({ ...e, ...patrimoniesMap[e.patrimony] }))
+                    const patrimoniesFound = equipmentsFound.map(e => e.patrimony)
+                    const equipmentsToInsert = equipments.filter(e => !patrimoniesFound.includes(e.patrimony))
+
+                    carrier.equipmentsToUpdate = equipmentsToUpdate
+                    carrier.equipmentsToInsert = equipmentsToInsert
+
+                    resolve(carrier)
+                }
+                ).catch(err => reject(err))
         } else {
-            console.log("Нет оборудования для анализа");
-            resolve(carrier);
+            resolve(carrier)
         }
-    });
-    
+    })
+
     const analyzeEmployees = (carrier) => new Promise((resolve, reject) => {
 
         const employees = carrier.employees
@@ -211,42 +195,30 @@ module.exports = app => {
     })
 
     const insertDesksEquipments = (carrier) => new Promise((resolve, reject) => {
-        const equipmentsIds = carrier.equipmentsIds;
-        const deskId = carrier.deskId;
-    
-        console.log("Подготовка данных для desks_equipments:", {
-            deskId,
-            equipmentsIds,
-        });
-    
+        const equipmentsIds = carrier.equipmentsIds
+        const deskId = carrier.deskId
+
         if (equipmentsIds && equipmentsIds.length > 0) {
-            app.db('desks_equipments')
-                .where({ deskId })
-                .del()
-                .then(() => {
-                    const rows = equipmentsIds.map(equipmentId => ({
-                        deskId,
-                        equipmentId,
-                    }));
-    
-                    console.log("Вставляем данные в desks_equipments:", rows);
-    
-                    return app.db.batchInsert('desks_equipments', rows, rows.length);
-                })
-                .then(() => {
-                    console.log('Успешно вставлено оборудование в desks_equipments');
-                    resolve(carrier);
-                })
-                .catch(err => {
-                    console.error("Ошибка вставки в desks_equipments:", err);
-                    reject(err);
-                });
+            app.db('desks_equipments').where({ deskId }).del().then(
+                rowsDeleted => {
+                    const rows = getDesksEquipmentsToInsert(deskId, equipmentsIds)
+                    const chunkSize = rows.length
+                    app.db.batchInsert('desks_equipments', rows, chunkSize)
+                        .then(_ => resolve(carrier))
+                        .catch(err => {
+                            reject(err)
+                        })
+
+                    resolve(carrier)
+                }
+            ).catch(err => {
+                reject(err)
+            })
         } else {
-            console.log("Нет данных для вставки в desks_equipments");
-            resolve(carrier);
+            resolve(carrier)
         }
-    });
-    
+    })
+
     const insertDesksEmployees = (carrier) => new Promise((resolve, reject) => {
         const employeesIds = carrier.employeesIds
         const deskId = carrier.deskId
@@ -272,39 +244,28 @@ module.exports = app => {
 
     const save = (req, res) => {
         validate(req, res)
-            .then(carrier => {
-                console.log('Валидация завершена:', carrier);
-                return saveDesk(carrier);
-            })
-            .then(carrier => {
-                console.log('Сохранение рабочего места завершено:', carrier);
-                return analyzeEquipments(carrier);
-            })
-            .then(carrier => {
-                console.log('Анализ оборудования завершён:', carrier);
-                return insertEquipments(carrier);
-            })
-            .then(carrier => updateEquipments(carrier))
-            .then(carrier => insertDesksEquipments(carrier))
-            .then(carrier => {
-                console.log('Вставка оборудования завершена:', carrier);
-                return analyzeEmployees(carrier);
-            })
-            .then(carrier => insertEmployees(carrier))
-            .then(carrier => updateEmployees(carrier))
-            .then(carrier => insertDesksEmployees(carrier))
-            .then(() => res.status(204).send())
-            .catch(err => {
-                console.error('Ошибка при сохранении:', err);
-                res.status(400).json({ errors: [err] });
-            });
-    };
-
+            .then(saveDesk)
+            .then(analyzeEquipments)
+            .then(insertEquipments)
+            .then(updateEquipments)
+            .then(insertDesksEquipments)
+            .then(analyzeEmployees)
+            .then(insertEmployees)
+            .then(updateEmployees)
+            .then(insertDesksEmployees)
+            .then(_ => res.status(204).send())
+            .catch(err => res.status(400).json({ errors: [err] }))
+    }
 
     const getNotEmptyEquipments = (equipments) => {
-        return equipments.filter(equipment => equipment && equipment.id);
-    };
-    
+        return equipments.reduce((notEmptyEquipments, equipment) => {
+            const keys = Object.keys(equipment)
+            if (keys.length > 0 && equipment.type && equipment.patrimony) {
+                notEmptyEquipments.push(equipment)
+            }
+            return notEmptyEquipments
+        }, [])
+    }
 
     const getNotEmptyEmployees = (employees) => {
         return employees.reduce((notEmptyEmployees, employee) => {

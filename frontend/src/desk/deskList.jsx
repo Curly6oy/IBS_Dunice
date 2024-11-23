@@ -13,7 +13,7 @@ class EvaluatonList extends Component {
         const options = { year: 'numeric', month: 'long', day: 'numeric' }
         
         const date = new Date(isoDate)
-        return `${date.toLocaleDateString('ru-RU', options)} в ${date.toLocaleTimeString('ru-RU')}`
+        return `${date.toLocaleDateString('en-US', options)} at ${date.toLocaleTimeString('en-US')}`
     }
 
     renderRows() {
@@ -45,12 +45,12 @@ class EvaluatonList extends Component {
                     <thead>
                         <tr>
                             <th>Идентификатор</th>
-                            <th>Направление стула</th>
-                            <th>Позиция X</th>
-                            <th>Позиция Y</th>
-                            <th>Комната</th>
-                            <th>Дата создания</th>
-                            <th className='table-actions'>Действия</th>
+                            <th>Направление стола</th>
+                            <th>X позиция</th>
+                            <th>Y позиция</th>
+                            <th>Комнота</th>
+                            <th>Создан</th>
+                            <th className='table-actions'>Дейстия</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -41,10 +41,10 @@ class EquipmentList extends Component {
                 <table className='table'>
                     <thead>
                         <tr>
-                            <th>Patrimony</th>
-                            <th>Type</th>
-                            <th>Created at</th>
-                            <th className='table-actions'>Actions</th>
+                            <th>Имущество</th>
+                            <th>Вид</th>
+                            <th>Создан</th>
+                            <th className='table-actions'>Действия</th>
                         </tr>
                     </thead>
                     <tbody>

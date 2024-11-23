@@ -23,14 +23,14 @@ class Employee extends Component {
     render() {
         return (
             <div> 
-                <ContentHeader title='Employees' small='Management' />
+                <ContentHeader title='Работники' small='Управление' />
                 <Content> 
                     <Tabs> 
                         <TabsHeader> 
-                            <TabHeader label='List' icon='bars' target='tabList' />
-                            <TabHeader label='Create' icon='plus' target='tabCreate' />
-                            <TabHeader label='Update' icon='pencil' target='tabUpdate' />
-                            <TabHeader label='Delete' icon='trash-o' target='tabDelete' />
+                            <TabHeader label='Список' icon='bars' target='tabList' />
+                            <TabHeader label='Создать' icon='plus' target='tabCreate' />
+                            <TabHeader label='Обновить' icon='pencil' target='tabUpdate' />
+                            <TabHeader label='Удалить' icon='trash-o' target='tabDelete' />
                         </TabsHeader> 
                         <TabsContent> 
                             <TabContent id='tabList'>
@@ -38,15 +38,15 @@ class Employee extends Component {
                             </TabContent>
                             <TabContent id='tabCreate'>
                                 <Form onSubmit={this.props.create}
-                                    submitLabel='Create' submitClass='primary' />
+                                    submitLabel='Создать' submitClass='primary' />
                             </TabContent>
                             <TabContent id='tabUpdate'>
                                 <Form onSubmit={this.props.update}
-                                    submitLabel='Update' submitClass='info' />
+                                    submitLabel='Обновить' submitClass='info' />
                             </TabContent>
                             <TabContent id='tabDelete'>
                                 <Form onSubmit={this.props.remove} readOnly={true}
-                                    submitLabel='Delete' submitClass='danger' />
+                                    submitLabel='Удалить' submitClass='danger' />
                             </TabContent>
                         </TabsContent> 
                     </Tabs> 

@@ -19,7 +19,7 @@ const getPossibleEquipments = () => {
     equipments.push({ id: 'Keyboard', name: 'Клавиатура' })
     equipments.push({ id: 'Mouse', name: 'Мышь' })
     equipments.push({ id: 'Phone', name: 'Телефон' })
-    equipments.push({ id: 'Drawer', name: 'Шкаф' })
+    equipments.push({ id: 'Drawer', name: 'Тумба' })
     equipments.push({ id: 'Chair', name: 'Стул' })
     return equipments
 }
@@ -42,7 +42,7 @@ export default class EmployeeList extends Component {
                         type="text"
                         field="name"
                         list={this.props.list}
-                        placeholder="Имя"
+                        placeholder="Name"
                         readOnly={this.props.readOnly}
                         component={EmployeeSuggestion} 
                         onSelected={employee => this.onSelected(employee, member, index)} />
@@ -52,7 +52,7 @@ export default class EmployeeList extends Component {
                         name={`${member}.identifier`}
                         type="text"
                         component={Identifier}
-                        placeholder="Идентификатор"
+                        placeholder="Identifier"
                         readOnly={this.props.readOnly}
                     />
 

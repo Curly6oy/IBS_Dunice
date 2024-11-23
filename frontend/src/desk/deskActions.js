@@ -54,11 +54,11 @@ function submit(values, method) {
 
         axios[method](`${consts.API_URL}/desks/${id}`, values)
             .then(resp => {
-                toastr.success('Успех', 'Операция выполнена успешно.')
+                toastr.success('Success', 'Successful operation.')
                 dispatch([getOfficeData(roomId), isUpdate ? initUpdate(values) : init()])
             })
             .catch(e => {
-                e.response.data.errors.forEach(error => toastr.error('Ошибка', error))
+                e.response.data.errors.forEach(error => toastr.error('Error', error))
             })
     }
 }
@@ -80,7 +80,7 @@ export function prepareToShow(desk, callback) {
                 dispatch(callback(deskToUpdate))
             })
             .catch(e => {
-                e.response.data.errors.forEach(error => toastr.error('Ошибка', error))
+                e.response.data.errors.forEach(error => toastr.error('Error', error))
             })
     }
 }
@@ -95,12 +95,14 @@ export function showUpdate(desk) {
     ]
 }
 
+
 export function showCreate(desk) {
     delete desk.id
     return [
         showTabs('tabCreate', 'tabList'),
         selectTab('tabCreate'),
         initialize('deskForm', desk),
+        //getOfficeData(desk.roomId)
     ]
 }
 

@@ -29,14 +29,14 @@ class DeskForm extends Component {
 
     getPossibleDirections() {
         const directions = []
-        directions.push({ id: 'north', name: 'Север' })
-        directions.push({ id: 'south', name: 'Юг' })
-        directions.push({ id: 'east', name: 'Восток' })
-        directions.push({ id: 'west', name: 'Запад' })
-        directions.push({ id: 'north-east', name: 'Северо-восток' })
-        directions.push({ id: 'north-west', name: 'Северо-запад' })
-        directions.push({ id: 'south-east', name: 'Юго-восток' })
-        directions.push({ id: 'south-west', name: 'Юго-запад' })
+        directions.push({ id: 'north', name: 'North' })
+        directions.push({ id: 'south', name: 'South' })
+        directions.push({ id: 'east', name: 'East' })
+        directions.push({ id: 'west', name: 'West' })
+        directions.push({ id: 'north-east', name: 'North-east' })
+        directions.push({ id: 'north-west', name: 'North-west' })
+        directions.push({ id: 'south-east', name: 'South-east' })
+        directions.push({ id: 'south-west', name: 'South-west' })
         return directions
     }
 
@@ -60,27 +60,27 @@ class DeskForm extends Component {
 
         const { rooms, handleSubmit, submitLabel, readOnly, getOfficeData, officeData, showCreate, showUpdate, equipments, employees, idSelected } = this.props
 
-        const functionShow = submitLabel === 'Создать' ? showCreate : showUpdate
+        const functionShow = submitLabel === 'Create' ? showCreate : showUpdate
 
         return (
             <form role='form' onSubmit={handleSubmit}>
                 <div className='box-body'>
-                    <Field name='roomId' label='Комната' cols='12 6'
+                    <Field name='roomId' label='Комнота' cols='12 6'
                         component={Select} readOnly={readOnly}
                         options={rooms} optionValue='id' optionLabel='name' autoFocus={true}
                         inputOnChange={getOfficeData} />
-                    <Field name='chairDirection' label='Направление стула' cols='12 2'
+                    <Field name='chairDirection' label='Направление стола' cols='12 2'
                         component={SelectWithIcon} icon="compass" readOnly={readOnly}
                         options={this.getPossibleDirections()} optionValue='id' optionLabel='name' />
-                    <Field name='x' label='Позиция X' cols='12 2'
+                    <Field name='x' label='X позиция' cols='12 2'
                         component={SelectWithIcon} icon="map-marker" readOnly={readOnly}
                         options={this.getPossiblePositions()} optionValue='id' optionLabel='name' />
-                    <Field name='y' label='Позиция Y' cols='12 2'
+                    <Field name='y' label='Y позиция' cols='12 2'
                         component={SelectWithIcon} icon="map-marker" readOnly={readOnly}
                         options={this.getPossiblePositions()} optionValue='id' optionLabel='name' />
 
                     <EmployeeList id="employeeList" cols='12 6' list={employees} readOnly={readOnly}
-                        field='employees' legend='Сотрудник' icon='user-plus' onSelected={this.onEmployeeChange} />
+                        field='employees' legend='Рабочий' icon='user-plus' onSelected={this.onEmployeeChange} />
 
                     <EquipmentList cols='12 6' list={equipments} readOnly={readOnly}
                         field='equipments' legend='Оборудование' icon='laptop' onSelected={this.onEquipmentChange} />
@@ -99,7 +99,7 @@ class DeskForm extends Component {
                             <div className="box_ box-default">
                                 <div className="box-header with-border">
                                     <i className="fa fa-building-o"></i>
-                                    <h3 className="box-title">МОЙ ОФИС - {officeData && officeData[0] && officeData[0].room}</h3>
+                                    <h3 className="box-title">Office map - {officeData && officeData[0] && officeData[0].room}</h3>
                                 </div>
                                 <div className="box-body">
                                     <OfficeMap
