@@ -21,27 +21,33 @@ module.exports = app => {
             return res.status(400).json({ errors: [msg] })
         }
 
-        if (equipment.id) {
-            delete equipment.userId
-            equipment.updated_at = new Date()
+        app.db.transaction(trx => {
+            if (equipment.id) {
+                delete equipment.userId
+                equipment.updated_at = new Date()
 
-            app.db('equipments')
-                .update(equipment)
-                .where({ id: equipment.id })
-                .then(_ => res.status(204).send())
-                .catch(err => res.status(500).json({ errors: [err] }))
-        } else {
-            equipment.created_at = new Date()
-            equipment.updated_at = null
+                app.db('equipments')
+                    .update(equipment)
+                    .where({ id: equipment.id })
+                    .transacting(trx)
+                    .then(_ => trx.commit())
+                    .catch(err => trx.rollback(err))
+            } else {
+                equipment.created_at = new Date()
+                equipment.updated_at = null
 
-            app.db('equipments')
-                .insert(equipment)
-                .returning('id')
-                .then(_ => res.status(204).send())
-                .catch(err => {
-                    res.status(500).json({ errors: [err] })})
-        }
+                app.db('equipments')
+                    .insert(equipment)
+                    .returning('id')
+                    .transacting(trx)
+                    .then(_ => trx.commit())
+                    .catch(err => trx.rollback(err))
+            }
+        })
+        .then(() => res.status(204).send())
+        .catch(err => res.status(500).json({ errors: [err] }))
     }
+
 
     const updateTeam = (equipmentId, team, res) => {
         app.db('teams').where({ equipmentId: equipmentId }).del().then(

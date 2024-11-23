@@ -1,14 +1,13 @@
-exports.up = function (knex) {
+exports.up = function (knex, Promise) {
     return knex.schema.createTable('users', table => {
-        table.increments('id').primary();  // Уникальный идентификатор
-        table.string('name').notNull();    // Имя пользователя
-        table.string('email').notNull().unique();  // Уникальный email
-        table.string('password').notNull();  // Пароль
-        table.timestamp('created_at').defaultTo(knex.fn.now());  // Время создания
-        table.timestamp('updated_at').defaultTo(knex.fn.now());  // Время обновления, с дефолтным значением
+        table.increments('id').primary();
+        table.string('name').notNull();
+        table.string('email').notNull().unique();
+        table.string('password').notNull();
+        table.timestamps();  // автоматические временные метки
     });
 };
 
-exports.down = function (knex) {
-    return knex.schema.dropTable('users');  // Удаление таблицы при откате миграции
+exports.down = function (knex, Promise) {
+    return knex.schema.dropTable('users');
 };

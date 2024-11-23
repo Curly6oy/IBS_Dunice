@@ -1,7 +1,7 @@
-const { array2map } = require('../common/mapUtil')
+const { array2map } = require('../common/mapUtil');
 
-module.exports = app => {
-    const { existsOrError, notExistsOrError } = app.api.validation
+module.exports = (app) => {
+    const { existsOrError, notExistsOrError } = app.api.validation;
 
     const save = (req, res) => {
         const employee = {
@@ -10,138 +10,115 @@ module.exports = app => {
             identifier: req.body.identifier,
             email: req.body.email,
             phone: req.body.phone,
-            userId: req.decoded.id
-        }
+            userId: req.decoded.id,
+        };
 
-        if (req.params.id) employee.id = req.params.id
+        if (req.params.id) employee.id = req.params.id;
 
         try {
-            existsOrError(employee.name, 'Name was not informed!')
-            existsOrError(employee.identifier, 'Identifier was not informed!')
-            existsOrError(employee.userId, 'User was not informed!')
+            existsOrError(employee.name, 'Имя не указано!');
+            existsOrError(employee.identifier, 'Идентификатор не указан!');
+            existsOrError(employee.userId, 'Пользователь не указан!');
         } catch (msg) {
-            return res.status(400).json({ errors: [msg] })
+            return res.status(400).json({ errors: [msg] });
         }
 
         if (employee.id) {
-            employee.updated_at = new Date()
+            employee.updated_at = new Date();
 
             app.db('employees')
                 .update(employee)
                 .where({ id: employee.id })
-                .then(_ => res.status(204).send())
-                .catch(err => res.status(500).json({ errors: [err] }))
+                .then(() => res.status(204).send())
+                .catch((err) => res.status(500).json({ errors: [err] }));
         } else {
-
-            employee.created_at = new Date()
-            employee.updated_at = null
+            employee.created_at = new Date();
+            employee.updated_at = null;
 
             app.db('employees')
                 .insert(employee, 'id')
-                .then(_ => res.status(204).send())
-                .catch(err => {
-                    res.status(500).json({ errors: [err] })
-                })
+                .then(() => res.status(204).send())
+                .catch((err) => res.status(500).json({ errors: [err] }));
         }
-    }
+    };
 
     const remove = async (req, res) => {
         try {
-            existsOrError(req.params.id, "Employee id was not informed!")
+            existsOrError(req.params.id, 'ID сотрудника не указано!');
 
-            //const desks = await app.db('desks').where({ employeeId: req.params.id })
-            //notExistsOrError(desks, "There is a desk with this employee!")
+            const rowsDeleted = await app.db('employees').where({ id: req.params.id }).del();
+            existsOrError(rowsDeleted, 'Сотрудник не найден!');
 
-            const rowsDeleted = await app.db('employees').where({ id: req.params.id }).del()
-
-            existsOrError(rowsDeleted, "Employee was not found!")
-
-            res.status(204).send()
+            res.status(204).send();
         } catch (msg) {
-            res.status(400).json({ errors: [msg] })
+            res.status(400).json({ errors: [msg] });
         }
-    }
+    };
 
-    const getRoomsIds = (userId) => new Promise((resolve, reject) => {
-        let roomsIds = []
-        app.db.select({
-            id: 'rooms.id',
-        }).from('rooms')
-            .leftJoin('teams', 'teams.roomId', 'rooms.id')
-            .leftJoin('users', 'teams.userId', 'users.id')
-            .where({ 'rooms.userId': userId })
-            .orWhere({ 'users.id': userId })
-            .then(rooms => {
-                if (rooms.length > 0) {
-                    const roomsMap = array2map(rooms, 'id')
-                    roomsIds = Object.keys(roomsMap)
-                }
-                resolve({ userId, roomsIds })
-            })
-            .catch(err => reject(err))
-    })
-
-    const getTeam = rooms => {
-        const distinctUsers = {}
-        return rooms && rooms.reduce((users, member) => {
-            if (!distinctUsers[member.memberId]) {
-                distinctUsers[member.memberId] = 1
-                users.push({ userId: member.memberId, user: member.memberName, time: member.memberTime })
-            }
-            return users
-        }, [])
-    }
-
-    const getMembersIds = ({ userId, roomsIds }) => new Promise((resolve, reject) => {
-        let membersIds = [userId]
-        if (roomsIds.length === 0) {
-            resolve(membersIds)
-        } else {
-            app.db.select({
-                id: 'rooms.id',
-                memberId: 'users.id',
-                memberName: 'users.name',
-                memberTime: 'users.created_at'
-            }).from('rooms')
+    const getRoomsIds = (userId) => {
+        return new Promise((resolve, reject) => {
+            app.db
+                .select({ id: 'rooms.id' })
+                .from('rooms')
                 .leftJoin('teams', 'teams.roomId', 'rooms.id')
                 .leftJoin('users', 'teams.userId', 'users.id')
-                .whereIn('rooms.id', roomsIds)
-                .then(rooms => {
-                    if (rooms.length > 0) {
-                        const team = getTeam(rooms)
-                        const usersMap = array2map(team, 'userId')
-                        membersIds = Object.keys(usersMap)
-                    }
-
-                    resolve(membersIds)
+                .where({ 'rooms.userId': userId })
+                .orWhere({ 'users.id': userId })
+                .then((rooms) => {
+                    const roomsMap = array2map(rooms, 'id');
+                    resolve({ userId, roomsIds: Object.keys(roomsMap).map((id) => parseInt(id, 10)) });
                 })
-                .catch(err => reject(err))
-        }
+                .catch((err) => reject(err));
+        });
+    };
 
-    })
+    const getMembersIds = ({ userId, roomsIds }) => {
+        return new Promise((resolve, reject) => {
+            const membersIds = [userId];
+            if (!roomsIds.length) {
+                resolve(membersIds);
+            } else {
+                app.db
+                    .select({
+                        memberId: 'users.id',
+                    })
+                    .from('rooms')
+                    .leftJoin('teams', 'teams.roomId', 'rooms.id')
+                    .leftJoin('users', 'teams.userId', 'users.id')
+                    .whereIn('rooms.id', roomsIds)
+                    .then((rooms) => {
+                        const team = rooms.map((r) => r.memberId);
+                        resolve([...membersIds, ...team].filter((id) => id !== null));
+                    })
+                    .catch((err) => reject(err));
+            }
+        });
+    };
 
-    const getEmployees = (membersIds) => new Promise((resolve, reject) => {
-        app.db('employees')
-            .whereIn('employees.userId', membersIds)
-            .then(employees => resolve(employees))
-            .catch(err => reject(err))
-    })
+    const getEmployees = (membersIds) => {
+        return new Promise((resolve, reject) => {
+            app.db('employees')
+                .whereIn('employees.userId', membersIds)
+                .then((employees) => resolve(employees))
+                .catch((err) => reject(err));
+        });
+    };
 
     const get = (req, res) => {
-        return getRoomsIds(req.decoded.id)
+        getRoomsIds(req.decoded.id)
             .then(getMembersIds)
             .then(getEmployees)
-            .then(employees => res.json(employees))
-            .catch(err => res.status(500).json({ errors: [err] }))
-    }
+            .then((employees) => res.json(employees))
+            .catch((err) => res.status(500).json({ errors: [err.message] }));
+    };
 
     const getById = (req, res) => {
         app.db('employees')
             .where({ id: req.params.id })
             .first()
-            .then(employee => res.json(employee))
-            .catch(err => res.status(500).json({ errors: [err] }))
-    }
+            .then((employee) => res.json(employee))
+            .catch((err) => res.status(500).json({ errors: [err] }));
+    };
 
-    return { save, remove, get, getById }
-}
+    return { save, remove, get, getById };
+};

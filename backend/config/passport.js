@@ -15,9 +15,9 @@ module.exports = app => {
             .first()
             .then(user => {
                 if (user) {
-                    done(null, { id: user.id, email: user.email })
+                    return done(null, { id: user.id, email: user.email })
                 } else {
-                    done(null, false)
+                    return done(null, false, { message: 'User not found' })
                 }
             })
             .catch(err => done(err, false))

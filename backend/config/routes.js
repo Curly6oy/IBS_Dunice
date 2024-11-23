@@ -2,9 +2,7 @@ const express = require('express')
 const auth = require('./auth')
 
 module.exports = app => {
-    /*
-     * Rotas protegidas por Token JWT
-     */
+    // Защищённые маршруты
     const protectedApi = express.Router()
     app.use('/api', protectedApi)
 
@@ -42,9 +40,7 @@ module.exports = app => {
 
     protectedApi.get('/users', app.api.user.get)
 
-    /*
-     * Rotas abertas
-     */
+    // Открытые маршруты
     const openApi = express.Router()
     app.use('/oapi', openApi)
     openApi.post('/signup', app.api.user.save)

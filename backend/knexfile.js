@@ -1,18 +1,19 @@
+require('dotenv').config()
 
 module.exports = {
     client: 'postgresql',
     connection: {
-      host: 'localhost',
-      database: 'postgres',
-      user:     'postgres',
-      password: 'passsqlZe9',
-      port: 5432
+        host: process.env.DB_HOST || 'localhost',
+        database: process.env.DB_NAME || 'postgres',
+        user: process.env.DB_USER || 'postgres',
+        password: process.env.DB_PASSWORD || 'passsqlZe9',
+        port: process.env.DB_PORT || '5432'
     },
     pool: {
-      min: 2,
-      max: 100
+        min: 2,
+        max: 100
     },
     migrations: {
-      tableName: 'knex_migrations'
+        tableName: 'knex_migrations'
     }
 };

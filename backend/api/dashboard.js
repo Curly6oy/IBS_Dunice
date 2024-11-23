@@ -6,24 +6,29 @@ module.exports = app => {
     const getEquipments = (userId) => new Promise((resolve, reject) => {
         const summary = { rooms: 0, desks: 0, number_desks: 0, members: 0, comments: 0, userId }
 
-        app.db.select({
-            id: 'rooms.id',
-            name: 'rooms.name',
-            userId: 'rooms.userId',
-            memberId: 'users.id'
-        }).from('rooms')
-            .leftJoin('teams', 'teams.roomId', 'rooms.id')
-            .leftJoin('users', 'teams.userId', 'users.id')
-            .where({ 'rooms.userId': userId })
-            .orWhere({ 'users.id': userId })
-            .then(rooms => {
-                const roomsMap = array2map(rooms, 'id')
-                summary.roomsIds = Object.keys(roomsMap)
-                summary.rooms = Object.values(roomsMap)
+        app.db.transaction(trx => {
+            app.db.select({
+                id: 'rooms.id',
+                name: 'rooms.name',
+                userId: 'rooms.userId',
+                memberId: 'users.id'
+            }).from('rooms')
+                .leftJoin('teams', 'teams.roomId', 'rooms.id')
+                .leftJoin('users', 'teams.userId', 'users.id')
+                .where({ 'rooms.userId': userId })
+                .orWhere({ 'users.id': userId })
+                .transacting(trx)
+                .then(rooms => {
+                    const roomsMap = array2map(rooms, 'id')
+                    summary.roomsIds = Object.keys(roomsMap)
+                    summary.rooms = Object.values(roomsMap)
 
-                resolve(summary)
-            })
-            .catch(err => reject(err))
+                    return trx.commit();
+                })
+                .catch(err => trx.rollback(err))
+        })
+        .then(() => resolve(summary))
+        .catch(err => reject(err))
     })
 
     const getTeam = (summary) => new Promise((resolve, reject) => {
