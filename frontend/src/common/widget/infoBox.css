@@ -5,7 +5,7 @@
 .box_ {
     position: relative;
     border-radius: 2px;
-    background: #fff;
+    background: #222d31;
     width: 100%;
     border: 1px solid hsl(0,0%,80%);
     margin-bottom: 18px;
@@ -14,4 +14,5 @@
 
 .box-header > .fa, .box-header > .glyphicon, .box-header > .ion, .box-header .box-title {
     font-size: 14px;
+    color: aliceblue;
 }
