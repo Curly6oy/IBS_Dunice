@@ -1,9 +1,11 @@
 // Импортируем функцию для преобразования массива в объект
 const { array2map } = require('../common/mapUtil');
 
+// Экспортируем модуль с функциями для работы с сотрудниками
 module.exports = (app) => {
     const { existsOrError, notExistsOrError } = app.api.validation;
 
+    // Функция для сохранения или обновления сотрудника
     const save = (req, res) => {
         const employee = {
             id: req.body.id,
@@ -43,6 +45,7 @@ module.exports = (app) => {
         }
     };
 
+    // Функция для удаления сотрудника по ID
     const remove = async (req, res) => {
         try {
             existsOrError(req.params.id, 'ID сотрудника не указано!');
@@ -56,6 +59,7 @@ module.exports = (app) => {
         }
     };
 
+    // Функция для получения ID комнат, связанных с пользователем
     const getRoomsIds = (userId) => {
         return new Promise((resolve, reject) => {
             app.db
