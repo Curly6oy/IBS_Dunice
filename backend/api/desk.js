@@ -1,6 +1,7 @@
+// Экспортируем функцию, принимающую объект приложения
 module.exports = app => {
     const { existsOrError } = app.api.validation
-
+    // Функция для форматирования даты в строку
     const getFormatedDate = (isoDate) => {
         if (!isoDate) {
             return undefined
@@ -11,6 +12,7 @@ module.exports = app => {
         return date.toLocaleDateString('en-US', options)
     }
 
+     // Функция валидации, отвечающая за проверку данных рабочего места
     const validate = (req, res) => new Promise((resolve, reject) => {
         const carrier = { req, res }
 
@@ -42,6 +44,7 @@ module.exports = app => {
         }
     })
 
+    // Функция для сохранения рабочего места в базе данных
     const saveDesk = (carrier) => new Promise((resolve, reject) => {
         const desk = carrier.desk
         const equipments = getNotEmptyEquipments(desk.equipments || [])
@@ -79,6 +82,7 @@ module.exports = app => {
         }
     })
 
+    // Функция для анализа оборудования и его обновлении или добавлении
     const analyzeEquipments = (carrier) => new Promise((resolve, reject) => {
 
         const equipments = carrier.equipments
@@ -107,6 +111,7 @@ module.exports = app => {
         }
     })
 
+    // Функция для анализа сотрудников, связанных с рабочим местом
     const analyzeEmployees = (carrier) => new Promise((resolve, reject) => {
 
         const employees = carrier.employees
@@ -132,6 +137,7 @@ module.exports = app => {
         }
     })
 
+    // Функция для вставки оборудования в базу данных
     const insertEquipments = (carrier) => new Promise((resolve, reject) => {
         const equipments = carrier.equipmentsToInsert
         const userId = carrier.userId
@@ -154,6 +160,7 @@ module.exports = app => {
         }
     })
 
+    // Функция для вставки сотрудников в базу данных
     const insertEmployees = (carrier) => new Promise((resolve, reject) => {
         const employees = carrier.employeesToInsert
         const userId = carrier.userId
@@ -177,14 +184,17 @@ module.exports = app => {
         }
     })
 
+    // Функция для обновления информации о оборудовании
     const updateEquipments = (carrier) => new Promise((resolve, reject) => {
         const equipments = carrier.equipmentsToUpdate
+        // Если есть оборудование, добавляем его ID в carrier
         if (equipments && equipments.length > 0) {
             carrier.equipmentsIds = (carrier.equipmentsIds || []).concat(equipments.map(e => e.id))
         }
         resolve(carrier)
     })
 
+    // Функция для обновления информации о сотрудниках
     const updateEmployees = (carrier) => new Promise((resolve, reject) => {
         const employees = carrier.employeesToUpdate
 
@@ -194,6 +204,7 @@ module.exports = app => {
         resolve(carrier)
     })
 
+    // Функция для вставки связей между столами и оборудованием
     const insertDesksEquipments = (carrier) => new Promise((resolve, reject) => {
         const equipmentsIds = carrier.equipmentsIds;
         const deskId = typeof carrier.deskId === 'object' ? carrier.deskId.id : carrier.deskId; // Извлекаем id, если это объект
@@ -222,7 +233,8 @@ module.exports = app => {
             resolve(carrier);
         }
     });
-
+    
+    // Функция для вставки связей между столами и сотрудниками
     const insertDesksEmployees = (carrier) => new Promise((resolve, reject) => {
         const deskId = carrier.deskId.id || carrier.deskId; // Исправление
         const employeesIds = carrier.employeesIds;
@@ -248,6 +260,7 @@ module.exports = app => {
         }
     });
 
+    // Функция для получения всех рабочих мест пользователя
     const save = (req, res) => {
         validate(req, res)
             .then(saveDesk)
