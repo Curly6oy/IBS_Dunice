@@ -1,3 +1,4 @@
+// Импортируем функцию для преобразования массива в объект
 const { array2map } = require('../common/mapUtil');
 
 module.exports = (app) => {
