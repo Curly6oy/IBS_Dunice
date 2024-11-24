@@ -1,8 +1,11 @@
+// Импортируем утилиту для преобразования массива в карту
 const { array2map } = require('../common/mapUtil')
 
+// Экспортируем функцию, принимающую объект приложения (app)
 module.exports = app => {
     const { existsOrError } = app.api.validation
 
+    // Функция для получения оборудования пользователя
     const getEquipments = (userId) => new Promise((resolve, reject) => {
         const summary = { rooms: 0, desks: 0, number_desks: 0, members: 0, comments: 0, userId }
 
@@ -19,6 +22,7 @@ module.exports = app => {
                 .orWhere({ 'users.id': userId })
                 .transacting(trx)
                 .then(rooms => {
+                    // Преобразуем массив комнат в карту по ID
                     const roomsMap = array2map(rooms, 'id')
                     summary.roomsIds = Object.keys(roomsMap)
                     summary.rooms = Object.values(roomsMap)
@@ -31,6 +35,7 @@ module.exports = app => {
         .catch(err => reject(err))
     })
 
+    // Функция для получения членов команды
     const getTeam = (summary) => new Promise((resolve, reject) => {
         app.db('teams').distinct('userId')
             .whereIn('roomId', summary.roomsIds)
@@ -46,6 +51,7 @@ module.exports = app => {
             .catch(err => reject(err))
     })
 
+    // Функция для построения объекта оборудования
     const buildEquipment = (desk) => {
         return ({ 
             type: desk.equipmentType, 
@@ -54,6 +60,7 @@ module.exports = app => {
             expirationDate: desk.equipmentExpirationDate })
     }
 
+    // Функция для получения рабочих мест (столов)
     const getDesks = (summary) => new Promise((resolve, reject) => {
         app.db.select({
             id: 'desks.id',
