@@ -31,11 +31,11 @@ function submit(values, method) {
         const id = values.id ? values.id : ''
         axios[method](`${consts.API_URL}/rooms/${id}`, values)
             .then(resp => {
-                toastr.success('Успешно', 'Операция выполнена.')
+                toastr.success('Success', 'Successful operation.')
                 dispatch(init())
             })
             .catch(e => {
-                e.response.data.errors.forEach(error => toastr.error('Ошибка', error))
+                e.response.data.errors.forEach(error => toastr.error('Error', error))
             })
     }
 }
@@ -45,7 +45,7 @@ export function prepareToShow(roomId, callback) {
         axios['get'](`${consts.API_URL}/rooms/${roomId}`)
             .then(room => { dispatch(callback(room.data)) })
             .catch(e => {
-                e.response.data.errors.forEach(error => toastr.error('Ошибка', error))
+                e.response.data.errors.forEach(error => toastr.error('Error', error))
             })
     }
 }

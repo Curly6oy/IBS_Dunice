@@ -13,7 +13,7 @@ class RoomList extends Component {
         const options = { year: 'numeric', month: 'long', day: 'numeric' }
         
         const date = new Date(isoDate)
-        return `${date.toLocaleDateString('ru-RU', options)} в ${date.toLocaleTimeString('ru-RU')}`
+        return `${date.toLocaleDateString('en-US', options)} at ${date.toLocaleTimeString('en-US')}`
     }
 
     renderRows() {
@@ -40,9 +40,9 @@ class RoomList extends Component {
                 <table className='table'>
                     <thead>
                         <tr>
-                            <th>Название</th>
-                            <th>Дата создания</th>
-                            <th className='table-actions'>Действия</th>
+                            <th>Name</th>
+                            <th>Created at</th>
+                            <th className='table-actions'>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

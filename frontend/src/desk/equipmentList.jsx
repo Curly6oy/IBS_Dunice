@@ -11,13 +11,13 @@ import './equipmentList.css'
 
 const getPossibleEquipments = () => {
     const equipments = []
-    equipments.push({ id: 'Chair', type: 'Стул' })
-    equipments.push({ id: 'Desk', type: 'Стол' })
-    equipments.push({ id: 'Desktop', type: 'Настольный компьютер' })
-    equipments.push({ id: 'Drawer', type: 'Тумба' })
-    equipments.push({ id: 'Laptop', type: 'Ноутбук' })
-    equipments.push({ id: 'Monitor', type: 'Монитор' })
-    equipments.push({ id: 'Phone', type: 'Телефон' })
+    equipments.push({ id: 'Chair', type: 'Chair' })
+    equipments.push({ id: 'Desk', type: 'Desk' })
+    equipments.push({ id: 'Desktop', type: 'Desktop' })
+    equipments.push({ id: 'Drawer', type: 'Drawer' })
+    equipments.push({ id: 'Laptop', type: 'Laptop' })
+    equipments.push({ id: 'Monitor', type: 'Monitor' })
+    equipments.push({ id: 'Phone', type: 'Phone' })
     return equipments
 }
 

@@ -7,15 +7,11 @@ import consts from '../consts'
 const INITIAL_VALUES = {name: '', parentId: undefined, list: [], employees: [{}]}
 
 export function getList() {
-    const request = axios.get(`${consts.API_URL}/employees`);
-    request
-        .then(response => console.log('Ответ API /employees:', response.data))
-        .catch(error => console.error('Ошибка API /employees:', error));
-
+    const request = axios.get(`${consts.API_URL}/employees`)
     return {
         type: 'EMPLOYEES_FETCHED',
         payload: request
-    };
+    }
 }
 
 export function create(values) {
@@ -29,7 +25,6 @@ export function update(values) {
 export function remove(values) {
     return submit(values, 'delete')
 }
-
 
 function submit(values, method) {
     return dispatch => {
@@ -53,11 +48,11 @@ export function showUpdate(employee) {
     ]
 }
 
-export function showDelete(equipment) {
-    return [
+export function showDelete(employee) {
+    return [ 
         showTabs('tabDelete'),
         selectTab('tabDelete'),
-        initialize('equipmentForm', equipment)
+        initialize('employeeForm', employee)
     ]
 }
 

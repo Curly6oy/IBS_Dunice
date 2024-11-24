@@ -19,9 +19,9 @@ class RoomForm extends Component {
         return (
             <form role='form' onSubmit={handleSubmit}>
                 <div className='box-body'>
-                    <Field name='name' label='Название' cols='12 4' placeholder='Введите название'
+                    <Field name='name' label='Name' cols='12 4' placeholder='Enter the name'
                         component={LabelAndInput} readOnly={readOnly} autoFocus={true} />
-                    <Field name='team' label='Менеджеры' cols='12 4'
+                    <Field name='team' label='Managers' cols='12 4'
                         component={Select} readOnly={readOnly} options={userList} optionValue='id' optionLabel='name' isMulti={true} />
                 </div>
                 <div className='box-footer text-right'>
@@ -29,7 +29,7 @@ class RoomForm extends Component {
                         {this.props.submitLabel}
                     </button>
                     <button type='button' className='btn btn-default'
-                        onClick={this.props.init}>Отмена</button>
+                        onClick={this.props.init}>Cancel</button>
                 </div>
             </form>
         )

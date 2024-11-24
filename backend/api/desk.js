@@ -195,52 +195,58 @@ module.exports = app => {
     })
 
     const insertDesksEquipments = (carrier) => new Promise((resolve, reject) => {
-        const equipmentsIds = carrier.equipmentsIds
-        const deskId = carrier.deskId
+        const equipmentsIds = carrier.equipmentsIds;
+        const deskId = typeof carrier.deskId === 'object' ? carrier.deskId.id : carrier.deskId; // Извлекаем id, если это объект
 
         if (equipmentsIds && equipmentsIds.length > 0) {
-            app.db('desks_equipments').where({ deskId }).del().then(
-                rowsDeleted => {
-                    const rows = getDesksEquipmentsToInsert(deskId, equipmentsIds)
-                    const chunkSize = rows.length
-                    app.db.batchInsert('desks_equipments', rows, chunkSize)
-                        .then(_ => resolve(carrier))
-                        .catch(err => {
-                            reject(err)
-                        })
 
-                    resolve(carrier)
-                }
-            ).catch(err => {
-                reject(err)
-            })
+            app.db('desks_equipments')
+                .where({ deskId })
+                .del()
+                .then(() => {
+                    const rows = getDesksEquipmentsToInsert(deskId, equipmentsIds);
+                    const chunkSize = rows.length;
+
+                    app.db.batchInsert('desks_equipments', rows, chunkSize)
+                        .then(() => resolve(carrier))
+                        .catch(err => {
+                            console.error('Error inserting desks_equipments:', err.message);
+                            reject(err);
+                        });
+                })
+                .catch(err => {
+                    console.error('Error deleting old desks_equipments:', err.message);
+                    reject(err);
+                });
         } else {
-            resolve(carrier)
+            resolve(carrier);
         }
-    })
+    });
 
     const insertDesksEmployees = (carrier) => new Promise((resolve, reject) => {
-        const employeesIds = carrier.employeesIds
-        const deskId = carrier.deskId
-
+        const deskId = carrier.deskId.id || carrier.deskId; // Исправление
+        const employeesIds = carrier.employeesIds;
+    
         if (employeesIds && employeesIds.length > 0) {
             app.db('desks_employees').where({ deskId }).del().then(
                 rowsDeleted => {
-                    const rows = getDesksEmployeesToInsert(deskId, employeesIds)
-                    const chunkSize = rows.length
+                    const rows = getDesksEmployeesToInsert(deskId, employeesIds);
+                    const chunkSize = rows.length;
                     app.db.batchInsert('desks_employees', rows, chunkSize)
-                        .then(_ => resolve(carrier))
+                        .then(() => resolve(carrier))
                         .catch(err => {
-                            reject(err)
-                        })
+                            console.error('Error inserting desks_employees:', err.message);
+                            reject(err);
+                        });
                 }
             ).catch(err => {
-                reject(err)
-            })
+                console.error('Error deleting old desks_employees:', err.message);
+                reject(err);
+            });
         } else {
-            resolve(carrier)
+            resolve(carrier);
         }
-    })
+    });
 
     const save = (req, res) => {
         validate(req, res)
@@ -253,9 +259,12 @@ module.exports = app => {
             .then(insertEmployees)
             .then(updateEmployees)
             .then(insertDesksEmployees)
-            .then(_ => res.status(204).send())
-            .catch(err => res.status(400).json({ errors: [err] }))
-    }
+            .then(() => res.status(204).send())
+            .catch(err => {
+                console.error('Error in save process:', err); // Логирование ошибки
+                res.status(400).json({ errors: [err.message || err] }); // Возвращаем более понятное сообщение
+            });
+    };
 
     const getNotEmptyEquipments = (equipments) => {
         return equipments.reduce((notEmptyEquipments, equipment) => {

@@ -65,25 +65,25 @@ class DeskForm extends Component {
         return (
             <form role='form' onSubmit={handleSubmit}>
                 <div className='box-body'>
-                    <Field name='roomId' label='Комнота' cols='12 6'
+                    <Field name='roomId' label='Room' cols='12 6'
                         component={Select} readOnly={readOnly}
                         options={rooms} optionValue='id' optionLabel='name' autoFocus={true}
                         inputOnChange={getOfficeData} />
-                    <Field name='chairDirection' label='Направление стола' cols='12 2'
+                    <Field name='chairDirection' label='Chair direction' cols='12 2'
                         component={SelectWithIcon} icon="compass" readOnly={readOnly}
                         options={this.getPossibleDirections()} optionValue='id' optionLabel='name' />
-                    <Field name='x' label='X позиция' cols='12 2'
+                    <Field name='x' label='X position' cols='12 2'
                         component={SelectWithIcon} icon="map-marker" readOnly={readOnly}
                         options={this.getPossiblePositions()} optionValue='id' optionLabel='name' />
-                    <Field name='y' label='Y позиция' cols='12 2'
+                    <Field name='y' label='Y position' cols='12 2'
                         component={SelectWithIcon} icon="map-marker" readOnly={readOnly}
                         options={this.getPossiblePositions()} optionValue='id' optionLabel='name' />
 
                     <EmployeeList id="employeeList" cols='12 6' list={employees} readOnly={readOnly}
-                        field='employees' legend='Рабочий' icon='user-plus' onSelected={this.onEmployeeChange} />
+                        field='employees' legend='Employee' icon='user-plus' onSelected={this.onEmployeeChange} />
 
                     <EquipmentList cols='12 6' list={equipments} readOnly={readOnly}
-                        field='equipments' legend='Оборудование' icon='laptop' onSelected={this.onEquipmentChange} />
+                        field='equipments' legend='Equipments' icon='laptop' onSelected={this.onEquipmentChange} />
 
                 </div>
                 <div className='box-footer text-right'>
@@ -99,7 +99,7 @@ class DeskForm extends Component {
                             <div className="box_ box-default">
                                 <div className="box-header with-border">
                                     <i className="fa fa-building-o"></i>
-                                    <h3 className="box-title">Office map - {officeData && officeData[0] && officeData[0].room}</h3>
+                                    <h3 className="box-title">MY OFFICE - {officeData && officeData[0] && officeData[0].room}</h3>
                                 </div>
                                 <div className="box-body">
                                     <OfficeMap

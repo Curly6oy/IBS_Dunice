@@ -44,13 +44,13 @@ class EvaluatonList extends Component {
                 <table className='table'>
                     <thead>
                         <tr>
-                            <th>Идентификатор</th>
-                            <th>Направление стола</th>
-                            <th>X позиция</th>
-                            <th>Y позиция</th>
-                            <th>Комнота</th>
-                            <th>Создан</th>
-                            <th className='table-actions'>Дейстия</th>
+                            <th>Identifier</th>
+                            <th>Chair direction</th>
+                            <th>X position</th>
+                            <th>Y position</th>
+                            <th>Room</th>
+                            <th>Created at</th>
+                            <th className='table-actions'>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

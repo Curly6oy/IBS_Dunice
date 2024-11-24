@@ -9,13 +9,13 @@ import Select from '../common/form/select'
 
 const getPossibleEquipments = () => {
     const equipments = []
-    equipments.push({ id: 'Chair', type: 'Стул' })
-    equipments.push({ id: 'Desk', type: 'Стол' })
-    equipments.push({ id: 'Desktop', type: 'Настольный компьютер' })
-    equipments.push({ id: 'Drawer', type: 'Выдвижной ящик' })
-    equipments.push({ id: 'Laptop', type: 'Ноутбук' })
-    equipments.push({ id: 'Monitor', type: 'Монитор' })
-    equipments.push({ id: 'Phone', type: 'Телефон' })
+    equipments.push({ id: 'Chair', type: 'Chair' })
+    equipments.push({ id: 'Desk', type: 'Desk' })
+    equipments.push({ id: 'Desktop', type: 'Desktop' })
+    equipments.push({ id: 'Drawer', type: 'Drawer' })
+    equipments.push({ id: 'Laptop', type: 'Laptop' })
+    equipments.push({ id: 'Monitor', type: 'Monitor' })
+    equipments.push({ id: 'Phone', type: 'Phone' })
     return equipments
 }
 
@@ -30,13 +30,13 @@ class EquipmentForm extends Component {
                         name="patrimony"
                         type="text"
                         component={LabelAndInput}
-                        label="Имущество"
+                        label="Patrimony"
                         readOnly={readOnly}
                     />
 
                     <Field name="type" cols='12 2'
                         component={Select}
-                        label="Вид"
+                        label="Type"
                         options={getPossibleEquipments()}
                         optionValue='id' optionLabel='type'
                         readOnly={readOnly} />
@@ -45,7 +45,7 @@ class EquipmentForm extends Component {
                         name="specification"
                         type="text"
                         component={LabelAndInput}
-                        label="Спецификация"
+                        label="Specification"
                         readOnly={readOnly}
                     />
 
@@ -53,8 +53,9 @@ class EquipmentForm extends Component {
                     <Field cols='12 2'
                         id="expirationDate"
                         name="expirationDate"
-                        label="Срок хранения"
+                        label="Expiration date"
                         component={Date}
+                        
                         readOnly={readOnly}
                     />
 
@@ -64,7 +65,7 @@ class EquipmentForm extends Component {
                         {this.props.submitLabel}
                     </button>
                     <button type='button' className='btn btn-default'
-                        onClick={this.props.init}>Отмена</button>
+                        onClick={this.props.init}>Cancel</button>
                 </div>
             </form>
         )
@@ -75,5 +76,4 @@ EquipmentForm = reduxForm({ form: 'equipmentForm', destroyOnUnmount: false })(Eq
 
 const mapStateToProps = state => ({ })
 const mapDispatchToProps = dispatch => bindActionCreators({ init}, dispatch)
-
 export default connect(mapStateToProps, mapDispatchToProps)(EquipmentForm)

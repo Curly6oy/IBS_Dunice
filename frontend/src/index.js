@@ -10,6 +10,7 @@ import thunk from 'redux-thunk'
 import reducers from './main/reducers'
 import * as serviceWorker from './serviceWorker';
 import App from './main/app'
+//import FileUploadButton from "./components/FileUploadButton";
 
 const devTools = window.__REDUX_DEVTOOLS_EXTENSION__ 
       && window.__REDUX_DEVTOOLS_EXTENSION__()

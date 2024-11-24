@@ -74,27 +74,38 @@ module.exports = app => {
     }
 
     const remove = async (req, res) => {
+        const trx = await app.db.transaction();  // Начало транзакции
+    
         try {
-            const equipmentId = req.params.id
-
-            existsOrError(equipmentId, "Equipment id was not informed!")
-
-            const evaluations = await app.db('evaluations').where({ equipmentId })
-
-            notExistsOrError(evaluations, "The equipment has evaluations!")
-
-            app.db('teams').where({ equipmentId }).del().then(
-                teamDeleted => {
-                    app.db('equipments').where({ id: equipmentId }).del().then(rowsDeleted => {
-                        existsOrError(rowsDeleted, "Equipment was not found!")
-                        res.status(204).send()
-                    })
-                })
+            const equipmentId = req.params.id;
+    
+            // Проверка на существование ID оборудования
+            existsOrError(equipmentId, "Equipment id was not informed!");
+    
+            // Проверка, есть ли связанные оценки
+            const evaluations = await app.db('evaluations').where({ equipmentId }).transacting(trx);
+            notExistsOrError(evaluations, "The equipment has evaluations!");
+    
+            // Логируем, что находимся в процессе удаления
+            console.log(`Deleting equipment with ID: ${equipmentId}`);
+    
+            // Удаление из таблицы teams
+            await app.db('teams').where({ equipmentId }).del().transacting(trx);
+            console.log(`Deleted teams associated with equipment ID: ${equipmentId}`);
+    
+            // Удаление оборудования
+            const rowsDeleted = await app.db('equipments').where({ id: equipmentId }).del().transacting(trx);
+            existsOrError(rowsDeleted, "Equipment was not found!");
+    
+            await trx.commit();  // Завершаем транзакцию
+            res.status(204).send();  // Ответ при успешном удалении
         } catch (msg) {
-            res.status(400).json({ errors: [msg] })
+            await trx.rollback();  // Откат транзакции в случае ошибки
+            console.error('Error during equipment removal:', msg);  // Логируем ошибку
+            res.status(400).json({ errors: [msg] });  // Ответ с ошибкой
         }
-    }
-
+    };
+    
     const get = (req, res) => {
         const userId = req.decoded.id
 
