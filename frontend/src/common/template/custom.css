@@ -5,11 +5,16 @@ body::-webkit-scrollbar {
     height: 0px;
   }
   
+.footer-link {
+    color: white;
+}
+
 .main-footer {
     position: fixed;
     bottom:0px;
     width:100%;
     background-color: #222d31;
+
 }
 
 button {

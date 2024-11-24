@@ -2,9 +2,11 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getList, showUpdate, showDelete } from './employeeActions'
-import If from '../common/operator/if'
 
 class EmployeeList extends Component {
+    state = {
+        search: ''
+    }
 
     componentWillMount() {
         this.props.getList()
@@ -17,8 +19,16 @@ class EmployeeList extends Component {
         return `${date.toLocaleDateString('en-US', options)} at ${date.toLocaleTimeString('en-US')}`
     }
 
+    handleSearchChange = (event) => {
+        this.setState({ search: event.target.value })
+    }
+
     renderRows() {
-        const list = this.props.list
+        const { search } = this.state
+        const list = this.props.list.filter(employee => 
+            employee.name.toLowerCase().includes(search.toLowerCase())
+        )
+        
         return list.map(employee => (
             <tr key={employee.id}>
                 <td>{employee.name}</td>
@@ -39,6 +49,15 @@ class EmployeeList extends Component {
     render() {
         return (
             <div>
+                <div className="search-container">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search by Name"
+                        value={this.state.search}
+                        onChange={this.handleSearchChange}
+                    />
+                </div>
                 <table className='table'>
                     <thead>
                         <tr>
@@ -61,4 +80,5 @@ const mapStateToProps = state => ({
     list: state.employee.list
 })
 const mapDispatchToProps = dispatch => bindActionCreators({ getList, showUpdate, showDelete }, dispatch)
+
 export default connect(mapStateToProps, mapDispatchToProps)(EmployeeList)

@@ -12,7 +12,7 @@
 
 .datePicker:focus {
     outline: 0;
-    border: 1px solid #3c8dbc; 
+    border: 1px solid #222d31; 
 }
 
 .react-datepicker-wrapper {

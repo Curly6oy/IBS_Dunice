@@ -33,9 +33,7 @@ class Navbar extends Component {
                             <span className="hidden-xs">{name}</span>
                         </a>
                         <ul className="dropdown-menu">
-                            <li className="user-header">
-                                <p>{name}<small>{email}</small></p>
-                            </li>
+
                             <li className="user-footer">
                                 <div className="pull-right">
                                     <a href="javascript:;" onClick={this.props.logout}

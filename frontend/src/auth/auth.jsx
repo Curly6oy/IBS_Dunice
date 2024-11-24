@@ -51,12 +51,7 @@ class Auth extends Component {
                         </Row>
                     </form>
                     <br />
-                    <div className="text-center">
-                        <a onClick={this.changeMode}>
-                            {loginMode ? 'Новый пользователь? Зарегистрируйтесь здесь!' :
-                                'Уже зарегистрированы? Войдите сюда!'}
-                        </a>
-                    </div>
+
                 </div>
                 <Messages />
             </div>
