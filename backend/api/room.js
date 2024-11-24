@@ -9,7 +9,7 @@ module.exports = app => {
             userId: req.decoded.id,  // Пользователь-менеджер
         };
     
-        console.log('Received room data:', room);
+
     
         if (req.params.id) room.id = req.params.id;
     
@@ -38,7 +38,7 @@ module.exports = app => {
                 .update(room)
                 .where({ id: room.id })
                 .then(() => {
-                    console.log('Room updated:', room.id);
+
                     if (team && team.length > 0) {
                         updateTeam(room.id, team, res);
                     } else {
@@ -57,7 +57,7 @@ module.exports = app => {
                 .insert(room)
                 .returning('id')
                 .then(roomId => {
-                    console.log('Room inserted with ID:', roomId[0]);
+
                     insertTeam(roomId[0], team, res);
                 })
                 .catch(err => {
